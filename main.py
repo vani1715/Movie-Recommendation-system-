@@ -40,13 +40,11 @@ def fetch_poster(title):
 def recommend(title):
     title = title.lower().strip()
 
-    # find matching movies
     matches = [k for k in indices.keys() if title in k]
 
     if not matches:
         return [], []
 
-    # pick best match (shortest distance / closest length)
     closest_title = min(matches, key=lambda x: abs(len(x) - len(title)))
     idx = indices[closest_title]
 
@@ -55,11 +53,19 @@ def recommend(title):
     hybrid_scores = []
 
     for i, score in sim_scores:
-        popularity = df.iloc[i]['popularity_norm'] if 'popularity_norm' in df.columns else 0
-        hybrid_score = 0.7 * score + 0.3 * popularity
+
+        if score < 0.1:
+            continue
+
+        popularity = df.iloc[i].get('popularity_norm', 0)
+
+        hybrid_score = 0.85 * score + 0.15 * popularity
+
         hybrid_scores.append((i, hybrid_score))
 
-    # sort by hybrid score
+    if not hybrid_scores:
+        return [], []
+
     hybrid_scores = sorted(hybrid_scores, key=lambda x: x[1], reverse=True)[1:11]
 
     movie_indices = [i[0] for i in hybrid_scores]
@@ -70,29 +76,3 @@ def recommend(title):
     return names, posters
 
 
-#def hybrid_recommend(title, alpha=0.7):
-    title = title.lower()
-    
-    if title not in indices:
-        return []
-    
-    idx = indices[title]
-    
-    sim_scores = list(enumerate(cosine_similarity(tfidf_matrix[idx], tfidf_matrix)[0]))
-    
-    hybrid_scores = []
-    
-    for i, score in sim_scores:
-        popularity = df.iloc[i]['popularity_norm']
-        
-
-        hybrid_score = alpha * score + (1 - alpha) * popularity
-        
-        hybrid_scores.append((i, hybrid_score))
-    
-
-    hybrid_scores = sorted(hybrid_scores, key=lambda x: x[1], reverse=True)[1:11]
-    
-    movie_indices = [i[0] for i in hybrid_scores]
-    
-    return df['title'].iloc[movie_indices].tolist()

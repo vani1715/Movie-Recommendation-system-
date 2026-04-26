@@ -26,17 +26,21 @@ indices = {k.lower(): v for k, v in indices.items()}
 
 def fetch_poster(title):
     try:
-        url = f"http://www.omdbapi.com/?t={title}&apikey={API_KEY}"
-        data = requests.get(url).json()
+        url = "http://www.omdbapi.com/"
+        params = {
+            "t": title,
+            "apikey": API_KEY
+        }
 
-        poster = data.get("Poster")
+        response = requests.get(url, params=params)
+        data = response.json()
 
-        if poster and poster != "N/A":
-            return poster
+        if data.get("Response") == "True" and data.get("Poster") != "N/A":
+            return data["Poster"]
         else:
-            return "https://via.placeholder.com/300x450?text=No+Image"
+            return "https://via.placeholder.com/300x450?text=No+Poster"
 
-    except:
+    except Exception as e:
         return "https://via.placeholder.com/300x450?text=Error"
 
 

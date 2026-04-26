@@ -37,10 +37,15 @@ if st.button("Recommend"):
 
 
 st.subheader("Trending Movies")
-trending=df.sort_values(by='vote_average',ascending=False).head(10)
+trending = df[(df['vote_count'] > 1000) & (df['vote_average'] > 6)].sort_values(by='popularity', ascending=False).head(10)
 
-for i in range(0,10,5):
+titles=trending['title'].tolist()
+
+for i in range(0,len(titles),5):
     cols=st.columns(5)
     for j in range(5):
-        with cols[j]:
-            st.caption(trending.iloc[i+j]['title'])
+        if i+j<len(titles):
+            with cols[j]:
+                poster=fetch_poster(titles[i+j])
+                st.image(poster)
+                st.caption(titles[i+j])

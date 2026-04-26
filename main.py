@@ -41,25 +41,61 @@ def fetch_poster(title):
 
 
 def recommend(title):
-    title = title.lower()
-    #matches = [movie for movie in indices.keys() if title in movie]
+    title = title.lower().strip()
 
+    # find matching movies
     matches = [k for k in indices.keys() if title in k]
 
     if not matches:
         return [], []
 
-    idx = indices[matches[0]]
-
-    #closest_title = matches[0]
-    #idx = indices[closest_title]
+    # pick best match (shortest distance / closest length)
+    closest_title = min(matches, key=lambda x: abs(len(x) - len(title)))
+    idx = indices[closest_title]
 
     sim_scores = list(enumerate(cosine_similarity(tfidf_matrix[idx], tfidf_matrix)[0]))
-    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)[1:11]
 
-    movie_indices = [i[0] for i in sim_scores]
+    hybrid_scores = []
+
+    for i, score in sim_scores:
+        popularity = df.iloc[i]['popularity_norm'] if 'popularity_norm' in df.columns else 0
+        hybrid_score = 0.7 * score + 0.3 * popularity
+        hybrid_scores.append((i, hybrid_score))
+
+    # sort by hybrid score
+    hybrid_scores = sorted(hybrid_scores, key=lambda x: x[1], reverse=True)[1:11]
+
+    movie_indices = [i[0] for i in hybrid_scores]
 
     names = df['title'].iloc[movie_indices].tolist()
     posters = [fetch_poster(m) for m in names]
 
     return names, posters
+
+
+def hybrid_recommend(title, alpha=0.7):
+    title = title.lower()
+    
+    if title not in indices:
+        return []
+    
+    idx = indices[title]
+    
+    sim_scores = list(enumerate(cosine_similarity(tfidf_matrix[idx], tfidf_matrix)[0]))
+    
+    hybrid_scores = []
+    
+    for i, score in sim_scores:
+        popularity = df.iloc[i]['popularity_norm']
+        
+
+        hybrid_score = alpha * score + (1 - alpha) * popularity
+        
+        hybrid_scores.append((i, hybrid_score))
+    
+
+    hybrid_scores = sorted(hybrid_scores, key=lambda x: x[1], reverse=True)[1:11]
+    
+    movie_indices = [i[0] for i in hybrid_scores]
+    
+    return df['title'].iloc[movie_indices].tolist()

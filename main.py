@@ -4,21 +4,16 @@ import requests
 from dotenv import load_dotenv
 from sklearn.metrics.pairwise import cosine_similarity
 
-load_dotenv()
-API_KEY=os.getenv("API_KEY")
+import streamlit as st
+
+API_KEY = st.secrets["API_KEY"]
 
 API_BASE="http://www.omdbapi.com/"
 #API_IMG_500=
 if not API_KEY:
     raise RuntimeError("API_KEY missing.put it in .env as API_KEY=xxxx")
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"]
-)
+
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 

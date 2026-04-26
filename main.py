@@ -56,7 +56,7 @@ def recommend(title):
 
     for i, score in sim_scores:
         popularity = df.iloc[i]['popularity_norm'] if 'popularity_norm' in df.columns else 0
-        hybrid_score = 0.92 * score + 0.08 * popularity
+        hybrid_score = 0.92 * score + 0.05 * popularity
         hybrid_scores.append((i, hybrid_score))
 
     hybrid_scores = sorted(hybrid_scores, key=lambda x: x[1], reverse=True)[1:11]

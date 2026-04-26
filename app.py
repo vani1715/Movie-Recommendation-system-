@@ -1,5 +1,5 @@
 import streamlit as st
-from main import recommend
+from main import recommend,fetch_poster
 import pickle
 
 df=pickle.load(open('df.pkl','rb'))

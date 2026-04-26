@@ -40,11 +40,13 @@ def fetch_poster(title):
 def recommend(title):
     title = title.lower().strip()
 
+    
     matches = [k for k in indices.keys() if title in k]
 
     if not matches:
         return [], []
 
+    # pick best match (shortest distance / closest length)
     closest_title = min(matches, key=lambda x: abs(len(x) - len(title)))
     idx = indices[closest_title]
 
@@ -53,18 +55,9 @@ def recommend(title):
     hybrid_scores = []
 
     for i, score in sim_scores:
-
-        if score < 0.1:
-            continue
-
-        popularity = df.iloc[i].get('popularity_norm', 0)
-
+        popularity = df.iloc[i]['popularity_norm'] if 'popularity_norm' in df.columns else 0
         hybrid_score = 0.85 * score + 0.15 * popularity
-
         hybrid_scores.append((i, hybrid_score))
-
-    if not hybrid_scores:
-        return [], []
 
     hybrid_scores = sorted(hybrid_scores, key=lambda x: x[1], reverse=True)[1:11]
 

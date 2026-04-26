@@ -1,10 +1,9 @@
 import os
 import pickle
 import requests
-from dotenv import load_dotenv
-from sklearn.metrics.pairwise import cosine_similarity
-
 import streamlit as st
+#from dotenv import load_dotenv
+from sklearn.metrics.pairwise import cosine_similarity
 
 API_KEY = st.secrets["API_KEY"]
 
@@ -13,8 +12,7 @@ API_BASE="http://www.omdbapi.com/"
 if not API_KEY:
     raise RuntimeError("API_KEY missing.put it in .env as API_KEY=xxxx")
 
-print(API_KEY)
-
+#print(API_KEY)
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -27,22 +25,17 @@ indices = {k.lower(): v for k, v in indices.items()}
 def fetch_poster(title):
     try:
         url = "http://www.omdbapi.com/"
-        params = {
-            "t": title,
-            "apikey": API_KEY
-        }
+        params = {"t": title, "apikey": API_KEY}
 
-        response = requests.get(url, params=params)
-        data = response.json()
+        data = requests.get(url, params=params).json()
 
         if data.get("Response") == "True" and data.get("Poster") != "N/A":
             return data["Poster"]
         else:
             return "https://via.placeholder.com/300x450?text=No+Poster"
 
-    except Exception as e:
+    except:
         return "https://via.placeholder.com/300x450?text=Error"
-
 
 def recommend(title):
     title = title.lower().strip()
@@ -77,7 +70,7 @@ def recommend(title):
     return names, posters
 
 
-def hybrid_recommend(title, alpha=0.7):
+#def hybrid_recommend(title, alpha=0.7):
     title = title.lower()
     
     if title not in indices:

@@ -4,15 +4,10 @@ import pickle
 
 df=pickle.load(open('df.pkl','rb'))
 
-if "selected_movies" not in st.session_state:
-    st.session_state.selected_movies=None
+if "selected_movie" not in st.session_state:
+    st.session_state.selected_movie=None
 
-query_params = st.query_params
-if "movie" in query_params:
-    try:
-        st.session_state.selected_movie = int(query_params["movie"])
-    except:
-        pass
+
 
 st.markdown("""
 <style>
@@ -31,6 +26,11 @@ img:hover {
     transform: scale(1.05);
     cursor: pointer;
 }
+.movie-title {
+    text-align:center;
+    font-weight:bold;
+    margin-top:5px;
+}
 </style>
 """, unsafe_allow_html=True
 )
@@ -39,7 +39,7 @@ st.title("Movie Recommendation System")
 
 #movie_name=st.text_input("Search a movie")
 
-if st.session_state.selected_movies is not None:
+if st.session_state.selected_movie is not None:
     movie=df.iloc[st.session_state.selected_movie]
 
     st.title(movie['title'])
@@ -56,7 +56,7 @@ if st.session_state.selected_movies is not None:
 
     if st.button("Back"):
         st.session_state.selected_movie=None
-        st.query_params.clear()
+        
 
 else:
     movie_name = st.text_input("Search a movie")
@@ -75,14 +75,10 @@ else:
                         idx = i + j
 
                         with cols[j]:
-                            st.markdown(f"""
-                            <a href="?movie={indices_list[idx]}" style="text-decoration:none;">
-                                <img src="{posters[idx]}" style="width:100%; border-radius:10px;">
-                            </a>
-                            """, unsafe_allow_html=True)
-
+                            st.image(posters[idx], use_container_width=True)
                             st.caption(names[idx])
-                            st.write(descriptions[idx][:100] + "...")
+                            desc = descriptions[idx][:120] + "..." if descriptions[idx] else "No description available"
+                            st.write(desc)
     
     
 
@@ -103,10 +99,5 @@ for i in range(0, len(titles), 5):
             idx = i + j
 
             with cols[j]:
-                st.markdown(f"""
-                <a href="?movie={trend_indices[idx]}" style="text-decoration:none;">
-                    <img src="{fetch_poster(titles[idx])}" style="width:100%; border-radius:10px;">
-                </a>
-                """, unsafe_allow_html=True)
-
+                st.image(fetch_poster(titles[idx]), use_container_width=True)
                 st.caption(titles[idx])

@@ -15,25 +15,75 @@ if "recommendations" not in st.session_state:
 
 st.markdown("""
 <style>
-body{
-    background-color:#141414;
-    color: white;
+ @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
+*{
+            font-family:'Montserrat', sans-serif !important;
+            }
+body, .stApp{
+    background-color: #111318 !important;
+    color: #E8E8E8 !important;
 }
  h1{
-     color: #E50914
+    color: #FF2B4E !important;
+    letter-spacing: 2px;
+    font-weight: 700 !important;
+    text-transform: uppercase;
 }
+h2, h3 {
+    color: #F0A500 !important;
+    font-weight: 600 !important;
+    letter-spacing: 1px;
+}
+.stSubheader {
+    border-left: 3px solid #F0A500;
+    padding-left: 8px;
+}
+.stTextInput > div > div > input {
+    background-color: #1E2028 !important;
+    color: #E8E8E8 !important;
+    border: 1px solid #2E3140 !important;
+    border-radius: 8px !important;
+}
+.stTextInput > div > div > input:focus {
+    border-color: #FF2B4E !important;
+    box-shadow: 0 0 0 2px rgba(255,43,78,0.2) !important;
+}
+.stButton > button {
+    background: linear-gradient(135deg, #FF2B4E, #C0003C) !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 6px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.5px !important;
+    transition: opacity 0.2s ease, transform 0.1s ease !important;
+}
+.stButton > button:hover {
+    opacity: 0.88 !important;
+    transform: translateY(-1px) !important;
+}
+.stButton > button:active {
+    transform: scale(0.97) !important;
+}
+            
 img {
     border-radius: 10px;
-    transition: 0.3s;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 img:hover {
     transform: scale(1.05);
+    box-shadow: 0 8px 24px rgba(255, 43, 78, 0.35);
     cursor: pointer;
 }
 .movie-title {
-    text-align:center;
-    font-weight:bold;
-    margin-top:5px;
+    text-align: center;
+    font-weight: 600;
+    margin-top: 6px;
+    color: #E8E8E8;
+}
+.stCaption {
+    color: #A0A0B0 !important;
+    font-size: 0.78rem !important;
+    text-align: center !important;
 }
 </style>
 """, unsafe_allow_html=True

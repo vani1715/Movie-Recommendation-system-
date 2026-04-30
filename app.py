@@ -17,6 +17,14 @@ body{
  h1{
      color: #E50914
 }
+img {
+    border-radius: 10px;
+    transition: 0.3s;
+}
+img:hover {
+    transform: scale(1.05);
+    cursor: pointer;
+}
 </style>
 """, unsafe_allow_html=True
 )
@@ -58,7 +66,7 @@ else:
                         idx=i+j
 
                         with cols[j]:
-                            if st.button(names[idx],key=f"btn_{idx}"):
+                            if st.button("",key=f"poster_{idx}"):
                                 st.session_state.selected_movie=indices_list[idx]
                             
                             st.image(posters[idx],use_column_width=True)

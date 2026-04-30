@@ -7,7 +7,8 @@ df=pickle.load(open('df.pkl','rb'))
 if "selected_movie" not in st.session_state:
     st.session_state.selected_movie=None
 
-
+if "expanded_desc" not in st.session_state:
+    st.session_state.expanded_desc = {}
 
 st.markdown("""
 <style>
@@ -73,12 +74,25 @@ else:
                 for j in range(5):
                     if i + j < len(names):
                         idx = i + j
+                        movie_key = f"rec_{indices_list[idx]}"
 
                         with cols[j]:
                             st.image(posters[idx], use_container_width=True)
                             st.caption(names[idx])
-                            desc = descriptions[idx][:120] + "..." if descriptions[idx] else "No description available"
-                            st.write(desc)
+
+                            desc = descriptions[idx]
+                            is_expanded = st.session_state.expanded_desc.get(movie_key, False)
+
+                            if is_expanded:
+                                st.write(desc)
+                                if st.button("View Less ▲", key=f"less_{movie_key}"):
+                                    st.session_state.expanded_desc[movie_key] = False
+                                    st.rerun()
+                            else:
+                                st.write(desc[:100] + "...")
+                                if st.button("View More ▼", key=f"more_{movie_key}"):
+                                    st.session_state.expanded_desc[movie_key] = True
+                                    st.rerun()
     
     
 

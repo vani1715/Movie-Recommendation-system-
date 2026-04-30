@@ -7,6 +7,12 @@ df=pickle.load(open('df.pkl','rb'))
 if "selected_movies" not in st.session_state:
     st.session_state.selected_movies=None
 
+query_params = st.query_params
+if "movie" in query_params:
+    try:
+        st.session_state.selected_movie = int(query_params["movie"])
+    except:
+        pass
 
 st.markdown("""
 <style>
@@ -31,7 +37,7 @@ img:hover {
 
 st.title("Movie Recommendation System")
 
-movie_name=st.text_input("Search a movie")
+#movie_name=st.text_input("Search a movie")
 
 if st.session_state.selected_movies is not None:
     movie=df.iloc[st.session_state.selected_movie]
@@ -50,46 +56,57 @@ if st.session_state.selected_movies is not None:
 
     if st.button("Back"):
         st.session_state.selected_movie=None
+        st.query_params.clear()
 
 else:
+    movie_name = st.text_input("Search a movie")
     if st.button("Recommend"):
-        names,posters,descriptions,indices_list=recommend(movie_name)
+        names, posters, descriptions, indices_list = recommend(movie_name)
 
         if not names:
             st.error("Movie not found. Try another name.")
         else:
             st.subheader("Recommended Movies")
-            for i in range(0,len(names),5):
-                cols=st.columns(5)
+
+            for i in range(0, len(names), 5):
+                cols = st.columns(5)
                 for j in range(5):
-                    if i+j<len(names):
-                        idx=i+j
+                    if i + j < len(names):
+                        idx = i + j
 
                         with cols[j]:
-                            if st.button("",key=f"poster_{idx}"):
-                                st.session_state.selected_movie=indices_list[idx]
-                            
-                            st.image(posters[idx],use_column_width=True)
+                            st.markdown(f"""
+                            <a href="?movie={indices_list[idx]}" style="text-decoration:none;">
+                                <img src="{posters[idx]}" style="width:100%; border-radius:10px;">
+                            </a>
+                            """, unsafe_allow_html=True)
+
                             st.caption(names[idx])
-                            st.write(descriptions[i+j][:100]+"...")
+                            st.write(descriptions[idx][:100] + "...")
+    
+    
 
 
 st.subheader("Trending Movies")
-trending = df[(df['vote_count'] > 500) & (df['vote_average'] > 6)].sort_values(by='popularity', ascending=False).head(10)
+trending = df[
+        (df['vote_count'] > 500) &
+        (df['vote_average'] > 6)
+    ].sort_values(by='popularity', ascending=False).head(10)
 
-titles=trending['title'].tolist()
-trend_indices=trending.index.tolist()
+titles = trending['title'].tolist()
+trend_indices = trending.index.tolist()
 
-for i in range(0,len(titles),5):
-    cols=st.columns(5)
+for i in range(0, len(titles), 5):
+    cols = st.columns(5)
     for j in range(5):
-        if i+j<len(titles):
-            idx=i+j
+        if i + j < len(titles):
+            idx = i + j
 
             with cols[j]:
-                if st.button("View",key=f"trend_btn_{idx}"):
-                    st.session_state.selected_movie=trend_indices[idx]
+                st.markdown(f"""
+                <a href="?movie={trend_indices[idx]}" style="text-decoration:none;">
+                    <img src="{fetch_poster(titles[idx])}" style="width:100%; border-radius:10px;">
+                </a>
+                """, unsafe_allow_html=True)
 
-                poster=fetch_poster(titles[idx])
-                st.image(poster,use_column_width=True)
                 st.caption(titles[idx])

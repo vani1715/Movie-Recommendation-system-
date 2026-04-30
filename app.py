@@ -64,7 +64,6 @@ h2, h3 {
 .stButton > button:active {
     transform: scale(0.97) !important;
 }
-            
 img {
     border-radius: 10px;
     transition: transform 0.25s ease, box-shadow 0.25s ease;
@@ -78,7 +77,7 @@ img:hover {
     text-align: center;
     font-weight: 600;
     margin-top: 6px;
-    color: #E8E8E8;
+    color: #3dc1db;
 }
 .stCaption {
     color: #A0A0B0 !important;

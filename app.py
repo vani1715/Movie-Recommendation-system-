@@ -106,7 +106,7 @@ else:
                                     st.session_state.expanded_desc[movie_key] = False
                                     st.rerun()
                             else:
-                                st.write(desc[:100] + "...")
+                                st.write(desc[:50] + "...")
                                 if st.button("View More ▼", key=f"more_{movie_key}"):
                                     st.session_state.expanded_desc[movie_key] = True
                                     st.rerun()

@@ -46,7 +46,6 @@ def recommend(title):
     if not matches:
         return [], []
 
-    # pick best match (shortest distance / closest length)
     closest_title = min(matches, key=lambda x: abs(len(x) - len(title)))
     idx = indices[closest_title]
 
@@ -65,7 +64,8 @@ def recommend(title):
 
     names = df['title'].iloc[movie_indices].tolist()
     posters = [fetch_poster(m) for m in names]
+    descriptions = df['overview'].iloc[movie_indices].fillna("No description available").tolist()
 
-    return names, posters
+    return names, posters, descriptions, movie_indices
 
 

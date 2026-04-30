@@ -10,6 +10,9 @@ if "selected_movie" not in st.session_state:
 if "expanded_desc" not in st.session_state:
     st.session_state.expanded_desc = {}
 
+if "recommendations" not in st.session_state:
+    st.session_state.recommendations = None
+
 st.markdown("""
 <style>
 body{
@@ -55,7 +58,7 @@ if st.session_state.selected_movie is not None:
     st.subheader("Genres")
     st.write(movie.get('genres',"N/A"))
 
-    if st.button("Back"):
+    if st.button("⬅ Back"):
         st.session_state.selected_movie=None
         
 
@@ -66,10 +69,24 @@ else:
 
         if not names:
             st.error("Movie not found. Try another name.")
+            st.session_state.recommendations = None
         else:
-            st.subheader("Recommended Movies")
-
-            for i in range(0, len(names), 5):
+            st.session_state.recommendations = {
+                "names": names,
+                "posters": posters,
+                "descriptions": descriptions,
+                "indices_list": indices_list,
+            }
+            st.session_state.expanded_desc = {}
+    if st.session_state.recommendations is not None:
+        rec = st.session_state.recommendations
+        names = rec["names"]
+        posters = rec["posters"]
+        descriptions = rec["descriptions"]
+        indices_list = rec["indices_list"]
+            
+        st.subheader("Recommended Movies")
+        for i in range(0, len(names), 5):
                 cols = st.columns(5)
                 for j in range(5):
                     if i + j < len(names):
@@ -95,8 +112,6 @@ else:
                                     st.rerun()
     
     
-
-
 st.subheader("Trending Movies")
 trending = df[
         (df['vote_count'] > 500) &
